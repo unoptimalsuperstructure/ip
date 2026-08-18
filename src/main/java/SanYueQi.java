@@ -18,6 +18,6 @@ public class SanYueQi {
         System.out.printf("Today's date is %s and the current time is %s.", date, time);
         System.out.println("\nAre you here to play with me?");
         System.out.println("____________________________________________________________\n");
-        System.out.println("See you again soon!");
+        System.out.println("Thank you for today! See you again soon!");
     }
 }
