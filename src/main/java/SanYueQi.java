@@ -25,7 +25,7 @@ public class SanYueQi {
             return taskList.size();
         }
 
-        public static void mark(String[] parts, boolean done) {
+        public static void markTask(String[] parts, boolean done) {
             if (parts.length < 2) {
                 System.out.println("Sorry, you need to specify the task number!");
             } else if (parts.length > 2) {
@@ -57,6 +57,29 @@ public class SanYueQi {
             for (Task task : taskList) {
                 System.out.printf("%d. %s\n", i, task);
                 i += 1;
+            }
+        }
+
+        public static void deleteTask(String[] parts) {
+            if (parts.length < 2) {
+                System.out.println("Sorry, you need to specify the task number!");
+            } else if (parts.length > 2) {
+                System.out.println("Sorry, you've specified too many inputs!");
+            } else {
+                try {
+                    int num = Integer.parseInt(parts[1]);
+                    if (num < 1 || num > taskList.size()) {
+                        System.out.printf("Sorry, I can't delete task %d. You have %d items in your list!\n", num, taskList.size());
+                    } else {
+                        Task task = taskList.get(num - 1);
+                        taskList.remove(num - 1);
+                        System.out.println("Okay, I've deleted this task:");
+                        System.out.printf("\t%s\n", task);
+                        System.out.printf("You currently have %d tasks in the list.\n", taskList.size());
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Sorry, you've entered an invalid task number!");
+                }
             }
         }
     }
@@ -212,11 +235,12 @@ public class SanYueQi {
             switch (parts[0]) {
                 case "bye" -> running = false;
                 case "list" -> Task.printTasks();
-                case "mark" -> Task.mark(parts, true);
-                case "unmark" -> Task.mark(parts, false);
+                case "mark" -> Task.markTask(parts, true);
+                case "unmark" -> Task.markTask(parts, false);
                 case "todo" -> ToDo.makeToDo(parts);
                 case "deadline" -> Deadline.makeDeadline(parts);
                 case "event" -> Event.makeEvent(parts);
+                case "delete" -> Task.deleteTask(parts);
                 default -> System.out.println("Sorry, I don't understand your request!");
             }
             System.out.println("____________________________________________________________\n");
