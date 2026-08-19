@@ -68,16 +68,21 @@ public class SanYueQi {
 
         @Override
         public String toString() {
-            return String.format("[T][%s] %s", super.done ? "X" : " ", super.desc);
+            return String.format("[T][%s]%s", super.done ? "X" : " ", super.desc);
         }
 
         public static void makeToDo(String[] parts) {
-            StringBuilder desc = new StringBuilder();
-            for (int i = 1; i < parts.length; i++) {
-                desc.append(parts[i]);
+            if (parts.length == 1) {
+                System.out.println("Sorry! Description cannot be empty!");
+            } else {
+                StringBuilder desc = new StringBuilder();
+                for (int i = 1; i < parts.length; i++) {
+                    desc.append(" ");
+                    desc.append(parts[i]);
+                }
+                ToDo todo = new ToDo(desc.toString());
+                printNewTask(todo);
             }
-            ToDo todo = new ToDo(desc.toString());
-            printNewTask(todo);
         }
     }
 
@@ -212,7 +217,7 @@ public class SanYueQi {
                 case "todo" -> ToDo.makeToDo(parts);
                 case "deadline" -> Deadline.makeDeadline(parts);
                 case "event" -> Event.makeEvent(parts);
-                default -> System.out.println("Unknown command");
+                default -> System.out.println("Sorry, I don't understand your request!");
             }
             System.out.println("____________________________________________________________\n");
         }
