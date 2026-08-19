@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class SanYueQi {
-    private static class Task {
+    abstract private static class Task {
         private String desc;
         private boolean done;
         private static ArrayList<Task> taskList = new ArrayList<>();
@@ -14,17 +14,11 @@ public class SanYueQi {
             this.done = false;
         }
 
-        @Override
-        public String toString() {
-            return String.format("[%s] %s", this.done ? "X" : " ", this.desc);
-        }
-
-        public static void addTask(String desc) {
-            Task task = new Task(desc);
+        public static void printNewTask(Task task) {
             taskList.add(task);
-            System.out.println("____________________________________________________________\n");
-            System.out.printf("Task added: %s\n", desc);
-            System.out.println("____________________________________________________________\n");
+            System.out.println("Okay! I've added a new task:\n");
+            System.out.printf("\t%s\n", task);
+            System.out.printf("You currently have %d tasks in the list.\n", taskList.size());
         }
 
         public static int getNumOfTasks() {
@@ -32,7 +26,6 @@ public class SanYueQi {
         }
 
         public static void mark(String[] parts, boolean done) {
-            System.out.println("____________________________________________________________\n");
             if (parts.length < 2) {
                 System.out.println("Sorry, you need to specify the task number!");
             } else if (parts.length > 2) {
@@ -56,21 +49,144 @@ public class SanYueQi {
                     System.out.println("Sorry, you've entered an invalid task number!");
                 }
             }
-
-            System.out.println("____________________________________________________________\n");
         }
 
         public static void printTasks() {
             int i = 1;
-            System.out.println("____________________________________________________________\n");
             System.out.println("Here are the tasks in your list:\n");
             for (Task task : taskList) {
                 System.out.printf("%d. %s\n", i, task);
                 i += 1;
             }
-            System.out.println("____________________________________________________________\n");
         }
     }
+
+    private static class ToDo extends Task {
+        private ToDo(String desc) {
+            super(desc);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("[T][%s] %s", super.done ? "X" : " ", super.desc);
+        }
+
+        public static void makeToDo(String[] parts) {
+            StringBuilder desc = new StringBuilder();
+            for (int i = 1; i < parts.length; i++) {
+                desc.append(parts[i]);
+            }
+            ToDo todo = new ToDo(desc.toString());
+            printNewTask(todo);
+        }
+    }
+
+    private static class Deadline extends Task {
+        private String dueDate;
+
+        private Deadline(String desc) {
+            super(desc);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("[D][%s]%s(by:%s)", super.done ? "X" : " ", super.desc, this.dueDate);
+        }
+
+        public static void makeDeadline(String[] parts) {
+            StringBuilder desc = new StringBuilder();
+            int i = 1;
+            while (i < parts.length) {
+                desc.append(" ");
+                if (parts[i].equals("/by")) {
+                    if (i == 1) {
+                        System.out.println("Sorry! Description cannot be empty!");
+                    } else if (i == parts.length - 1) {
+                        System.out.println("Sorry! Deadline cannot be empty!");
+                    } else {
+                        Deadline deadline = new Deadline(desc.toString());
+                        StringBuilder dueDate = new StringBuilder();
+                        for (int j = i + 1; j < parts.length; j++) {
+                            dueDate.append(" ");
+                            dueDate.append(parts[j]);
+                        }
+                        deadline.dueDate = dueDate.toString();
+                        printNewTask(deadline);
+                    }
+                    break;
+                } else {
+                    desc.append(parts[i]);
+                }
+                i += 1;
+            }
+            if (i == parts.length) {
+                System.out.println("Sorry! You didn't indicate the deadline!");
+            }
+        }
+    }
+
+    private static class Event extends Task {
+        private String from;
+        private String to;
+
+        private Event(String desc) {
+            super(desc);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("[E][%s]%s (from:%s to:%s)", super.done ? "X" : " ", super.desc, this.from, this.to);
+        }
+
+        public static void makeEvent(String[] parts) {
+            StringBuilder desc = new StringBuilder();
+            int i = 1;
+            int foundFrom = -1;
+            while (i < parts.length) {
+                if (parts[i].equals("/to")) {
+                    if (foundFrom == -1) {
+                        System.out.println("Sorry! End time must be indicated after start time!");
+                    } else if (i == foundFrom + 1) {
+                        System.out.println("Sorry! Starting time cannot be empty!");
+                    } else if (i == parts.length - 1) {
+                        System.out.println("Sorry! Ending time cannot be empty!");
+                    } else {
+                        Event event = new Event(desc.toString());
+                        StringBuilder from = new StringBuilder();
+                        for (int j = foundFrom + 1; j < i; j++) {
+                            from.append(" ");
+                            from.append(parts[j]);
+                        }
+                        StringBuilder to = new StringBuilder();
+                        for (int k = i + 1; k < parts.length; k++) {
+                            to.append(" ");
+                            to.append(parts[k]);
+                        }
+                        event.from = from.toString();
+                        event.to = to.toString();
+                        printNewTask(event);
+                    }
+                    break;
+                }
+                else if (parts[i].equals("/from") && foundFrom == -1) {
+                    if (i == 1) {
+                        System.out.println("Sorry! Description cannot be empty!");
+                        break;
+                    } else {
+                        foundFrom = i;
+                    }
+                } else if (foundFrom == -1) {
+                    desc.append(" ");
+                    desc.append(parts[i]);
+                }
+                i += 1;
+            }
+            if (i == parts.length) {
+                System.out.println("Sorry! You didn't indicate either the start or end time!");
+            }
+        }
+    }
+
     public static void main(String[] args) {
         LocalDateTime now = LocalDateTime.now();
         String date = now.format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"));
@@ -86,14 +202,19 @@ public class SanYueQi {
         Scanner scanner = new Scanner(System.in);
         while (running) {
             prompt = scanner.nextLine();
-            String[] parts = prompt.split(" ");
+            String[] parts = prompt.split("\\s+");
+            System.out.println("____________________________________________________________\n");
             switch (parts[0]) {
                 case "bye" -> running = false;
                 case "list" -> Task.printTasks();
                 case "mark" -> Task.mark(parts, true);
                 case "unmark" -> Task.mark(parts, false);
-                default -> Task.addTask(prompt);
+                case "todo" -> ToDo.makeToDo(parts);
+                case "deadline" -> Deadline.makeDeadline(parts);
+                case "event" -> Event.makeEvent(parts);
+                default -> System.out.println("Unknown command");
             }
+            System.out.println("____________________________________________________________\n");
         }
         System.out.println("____________________________________________________________\n");
         System.out.println("Thank you for today! See you again soon!");
