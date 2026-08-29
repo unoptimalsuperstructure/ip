@@ -1,8 +1,10 @@
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.nio.file.Files;
@@ -189,7 +191,16 @@ public class SanYueQi {
                             dueDate.append(parts[j]);
                             if (j < parts.length - 1) dueDate.append(" ");
                         }
-                        deadline.dueDate = dueDate.toString();
+                        String formattedDueDate;
+                        try {
+                            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+                            formattedDueDate = LocalDate.parse(dueDate.toString(), inputFormatter)
+                                                        .format(outputFormatter);
+                        } catch (DateTimeParseException e) {
+                            formattedDueDate = dueDate.toString();
+                        }
+                        deadline.dueDate = formattedDueDate;
                         printNewTask(deadline);
                     }
                     break;
@@ -254,8 +265,24 @@ public class SanYueQi {
                             to.append(parts[k]);
                             if (k < parts.length - 1) to.append(" ");
                         }
-                        event.from = from.toString();
-                        event.to = to.toString();
+                        String formattedFrom;
+                        String formattedTo;
+                        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+                        try {
+                            formattedFrom = LocalDate.parse(from.toString(), inputFormatter)
+                                                     .format(outputFormatter);
+                        } catch (DateTimeParseException e) {
+                            formattedFrom = from.toString();
+                        }
+                        try {
+                            formattedTo = LocalDate.parse(to.toString(), inputFormatter)
+                                                   .format(outputFormatter);
+                        } catch (DateTimeParseException e) {
+                            formattedTo = to.toString();
+                        }
+                        event.from = formattedFrom;
+                        event.to = formattedTo;
                         printNewTask(event);
                     }
                     break;
