@@ -35,7 +35,7 @@ public class SanYueQi {
                 serialisedTasks.add(task.toCSV());
             }
             try {
-                Files.write(Paths.get("logbook.txt"), serialisedTasks);
+                Files.write(Paths.get("logbook.csv"), serialisedTasks);
             } catch (IOException e) {
                 System.out.println("Critical error: Writing tasks failed.");
             }
@@ -363,11 +363,11 @@ public class SanYueQi {
     public static void main(String[] args) {
         List<String> lines;
         try {
-            lines = Files.readAllLines(Paths.get("logbook.txt"));
+            lines = Files.readAllLines(Paths.get("logbook.csv"));
             System.out.println("Existing logbook found and loaded. Parsing...");
         } catch (IOException e1) {
             try {
-                Files.createFile(Paths.get("logbook.txt"));
+                Files.createFile(Paths.get("logbook.csv"));
                 lines = new ArrayList<>();
                 System.out.println("Existing logbook not found. New logbook created.");
             } catch (IOException e2) {
