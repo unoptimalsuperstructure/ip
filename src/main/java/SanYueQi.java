@@ -1,7 +1,12 @@
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class SanYueQi {
     abstract private static class Task {
@@ -9,13 +14,36 @@ public class SanYueQi {
         private boolean done;
         private static ArrayList<Task> taskList = new ArrayList<>();
 
-        private Task(String desc) {
+        private Task(boolean done, String desc) {
             this.desc = desc;
-            this.done = false;
+            this.done = done;
+        }
+
+        public static void addTask(Task task) {
+            taskList.add(task);
+        }
+
+        public String serialise(String s) {
+            return "\"" + s.replace("\"", "\"\"") + "\"";
+        }
+
+        abstract public String toCSV();
+
+        public static void writeTasks() {
+            ArrayList<String> serialisedTasks = new ArrayList<>();
+            for (Task task: taskList) {
+                serialisedTasks.add(task.toCSV());
+            }
+            try {
+                Files.write(Paths.get("logbook.txt"), serialisedTasks);
+            } catch (IOException e) {
+                System.out.println("Critical error: Writing tasks failed.");
+            }
         }
 
         public static void printNewTask(Task task) {
             taskList.add(task);
+            writeTasks();
             System.out.println("Okay! I've added a new task:\n");
             System.out.printf("\t%s\n", task);
             System.out.printf("You currently have %d tasks in the list.\n", taskList.size());
@@ -39,6 +67,7 @@ public class SanYueQi {
                         Task task = taskList.get(num - 1);
                         if (task.done != done) {
                             task.done = done;
+                            writeTasks();
                             System.out.println(done ? "Great job on completing this task!" : "Okay, I've marked this task as not done yet:");
                         } else {
                             System.out.println(done ? "You've already marked the following task as done!" : "This task is already currently marked as not done yet!");
@@ -73,6 +102,7 @@ public class SanYueQi {
                     } else {
                         Task task = taskList.get(num - 1);
                         taskList.remove(num - 1);
+                        writeTasks();
                         System.out.println("Okay, I've deleted this task:");
                         System.out.printf("\t%s\n", task);
                         System.out.printf("You currently have %d tasks in the list.\n", taskList.size());
@@ -86,12 +116,22 @@ public class SanYueQi {
 
     private static class ToDo extends Task {
         private ToDo(String desc) {
-            super(desc);
+            super(false, desc);
+        }
+
+        private ToDo(boolean done, String desc) {
+            super(done, desc);
+            addTask(this);
         }
 
         @Override
         public String toString() {
-            return String.format("[T][%s]%s", super.done ? "X" : " ", super.desc);
+            return String.format("[T][%s] %s", super.done ? "X" : " ", super.desc);
+        }
+
+        @Override
+        public String toCSV() {
+            return String.format("T,%s,%s", super.done ? "1" : "0", serialise(super.desc));
         }
 
         public static void makeToDo(String[] parts) {
@@ -100,8 +140,8 @@ public class SanYueQi {
             } else {
                 StringBuilder desc = new StringBuilder();
                 for (int i = 1; i < parts.length; i++) {
-                    desc.append(" ");
                     desc.append(parts[i]);
+                    if (i < parts.length - 1) desc.append(" ");
                 }
                 ToDo todo = new ToDo(desc.toString());
                 printNewTask(todo);
@@ -113,20 +153,31 @@ public class SanYueQi {
         private String dueDate;
 
         private Deadline(String desc) {
-            super(desc);
+            super(false, desc);
+        }
+
+        private Deadline(boolean done, String desc, String dueDate) {
+            super(done, desc);
+            this.dueDate = dueDate;
+            addTask(this);
         }
 
         @Override
         public String toString() {
-            return String.format("[D][%s]%s(by:%s)", super.done ? "X" : " ", super.desc, this.dueDate);
+            return String.format("[D][%s] %s (by: %s)", super.done ? "X" : " ", super.desc, this.dueDate);
+        }
+
+        @Override
+        public String toCSV() {
+            return String.format("D,%s,%s,%s", super.done ? "1" : "0", serialise(super.desc), serialise(this.dueDate));
         }
 
         public static void makeDeadline(String[] parts) {
             StringBuilder desc = new StringBuilder();
             int i = 1;
             while (i < parts.length) {
-                desc.append(" ");
                 if (parts[i].equals("/by")) {
+                    desc.deleteCharAt(desc.length() - 1);
                     if (i == 1) {
                         System.out.println("Sorry! Description cannot be empty!");
                     } else if (i == parts.length - 1) {
@@ -135,8 +186,8 @@ public class SanYueQi {
                         Deadline deadline = new Deadline(desc.toString());
                         StringBuilder dueDate = new StringBuilder();
                         for (int j = i + 1; j < parts.length; j++) {
-                            dueDate.append(" ");
                             dueDate.append(parts[j]);
+                            if (j < parts.length - 1) dueDate.append(" ");
                         }
                         deadline.dueDate = dueDate.toString();
                         printNewTask(deadline);
@@ -145,6 +196,7 @@ public class SanYueQi {
                 } else {
                     desc.append(parts[i]);
                 }
+                desc.append(" ");
                 i += 1;
             }
             if (i == parts.length) {
@@ -158,12 +210,24 @@ public class SanYueQi {
         private String to;
 
         private Event(String desc) {
-            super(desc);
+            super(false, desc);
+        }
+
+        private Event(boolean done, String desc, String from, String to) {
+            super(done, desc);
+            this.from = from;
+            this.to = to;
+            addTask(this);
         }
 
         @Override
         public String toString() {
-            return String.format("[E][%s]%s (from:%s to:%s)", super.done ? "X" : " ", super.desc, this.from, this.to);
+            return String.format("[E][%s] %s (from: %s to: %s)", super.done ? "X" : " ", super.desc, this.from, this.to);
+        }
+
+        @Override
+        public String toCSV() {
+            return String.format("E,%s,%s,%s,%s", super.done ? "1" : "0", serialise(super.desc), serialise(this.from), serialise(this.to));
         }
 
         public static void makeEvent(String[] parts) {
@@ -182,13 +246,13 @@ public class SanYueQi {
                         Event event = new Event(desc.toString());
                         StringBuilder from = new StringBuilder();
                         for (int j = foundFrom + 1; j < i; j++) {
-                            from.append(" ");
                             from.append(parts[j]);
+                            if (j < i - 1) from.append(" ");
                         }
                         StringBuilder to = new StringBuilder();
                         for (int k = i + 1; k < parts.length; k++) {
-                            to.append(" ");
                             to.append(parts[k]);
+                            if (k < parts.length - 1) to.append(" ");
                         }
                         event.from = from.toString();
                         event.to = to.toString();
@@ -197,6 +261,7 @@ public class SanYueQi {
                     break;
                 }
                 else if (parts[i].equals("/from") && foundFrom == -1) {
+                    desc.deleteCharAt(desc.length() - 1);
                     if (i == 1) {
                         System.out.println("Sorry! Description cannot be empty!");
                         break;
@@ -204,8 +269,8 @@ public class SanYueQi {
                         foundFrom = i;
                     }
                 } else if (foundFrom == -1) {
-                    desc.append(" ");
                     desc.append(parts[i]);
+                    desc.append(" ");
                 }
                 i += 1;
             }
@@ -215,7 +280,108 @@ public class SanYueQi {
         }
     }
 
+    private static boolean parseLine(String line) {
+        if (line.length() <= 4) return false;
+        boolean quote = false;
+        StringBuilder[] args = new StringBuilder[4]; // description, dueDate, from, to
+        for (int j = 0; j < 4; j++) {
+            args[j] = new StringBuilder();
+        }
+        char type;
+        boolean done;
+        int index = 0;
+        String temp1 = new String(new char[]{line.charAt(0), line.charAt(1)});
+        String temp2 = new String(new char[]{line.charAt(2), line.charAt(3)});
+        switch (temp1) {
+            case "T,":
+                type = 'T';
+                break;
+            case "D,":
+                type = 'D';
+                break;
+            case "E,":
+                type = 'E';
+                break;
+            default:
+                return false;
+        }
+        switch (temp2) {
+            case "0,":
+                done = false;
+                break;
+            case "1,":
+                done = true;
+                break;
+            default:
+                return false;
+        }
+        for (int i = 4; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '"') {
+                if (!quote) {
+                    quote = true;
+                } else {
+                    if (i == line.length() - 1) {
+                        break;
+                    } else {
+                        i++;
+                        if (line.charAt(i) == ',') {
+                            quote = false;
+                            if (index == 0) {
+                                index = type == 'D' ? 1 : 2;
+                            } else {
+                                index = 3;
+                            }
+                        } else if (line.charAt(i) == '"') {
+                            args[index].append('"');
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+            } else {
+                args[index].append(c);
+            }
+        }
+        switch (type) {
+            case 'T':
+                ToDo todo = new ToDo(done, args[0].toString());
+                System.out.println(todo);
+                break;
+            case 'D':
+                new Deadline(done, args[0].toString(), args[1].toString());
+                break;
+            case 'E':
+                new Event(done, args[0].toString(), args[2].toString(), args[3].toString());
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(Paths.get("logbook.txt"));
+            System.out.println("Existing logbook found and loaded. Parsing...");
+        } catch (IOException e1) {
+            try {
+                Files.createFile(Paths.get("logbook.txt"));
+                lines = new ArrayList<>();
+                System.out.println("Existing logbook not found. New logbook created.");
+            } catch (IOException e2) {
+                System.out.println("Critical error: Unable to load or create logbook");
+                return;
+            }
+        }
+        for (int i = 0; i < lines.size(); i++) {
+            if (!parseLine(lines.get(i))) {
+                System.out.printf("Critical error: Malformed logbook at line %d", i + 1);
+                return;
+            }
+        }
+
         LocalDateTime now = LocalDateTime.now();
         String date = now.format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"));
         String time = now.format(DateTimeFormatter.ofPattern("HH:mm"));
