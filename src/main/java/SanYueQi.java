@@ -11,29 +11,22 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class SanYueQi {
-    abstract private static class Task {
-        private String desc;
-        private boolean done;
-        private static ArrayList<Task> taskList = new ArrayList<>();
+    private static final TaskList masterTaskList = new TaskList();
 
-        private Task(boolean done, String desc) {
-            this.desc = desc;
-            this.done = done;
+    private static class TaskList {
+        private final ArrayList<Task> taskList;
+
+        public TaskList() {
+            this.taskList = new ArrayList<>();
         }
 
-        public static void addTask(Task task) {
-            taskList.add(task);
+        public void addTask(Task task) {
+            this.taskList.add(task);
         }
 
-        public String serialise(String s) {
-            return "\"" + s.replace("\"", "\"\"") + "\"";
-        }
-
-        abstract public String toCSV();
-
-        public static void writeTasks() {
+        public void writeTasks() {
             ArrayList<String> serialisedTasks = new ArrayList<>();
-            for (Task task: taskList) {
+            for (Task task : this.taskList) {
                 serialisedTasks.add(task.toCSV());
             }
             try {
@@ -43,19 +36,19 @@ public class SanYueQi {
             }
         }
 
-        public static void printNewTask(Task task) {
-            taskList.add(task);
+        public void printNewTask(Task task) {
+            this.taskList.add(task);
             writeTasks();
             System.out.println("Okay! I've added a new task:\n");
             System.out.printf("\t%s\n", task);
             System.out.printf("You currently have %d tasks in the list.\n", taskList.size());
         }
 
-        public static int getNumOfTasks() {
-            return taskList.size();
+        public int getNumOfTasks() {
+            return this.taskList.size();
         }
 
-        public static void markTask(String[] parts, boolean done) {
+        public void markTask(String[] parts, boolean done) {
             if (parts.length < 2) {
                 System.out.println("Sorry, you need to specify the task number!");
             } else if (parts.length > 2) {
@@ -63,10 +56,10 @@ public class SanYueQi {
             } else {
                 try {
                     int num = Integer.parseInt(parts[1]);
-                    if (num < 1 || num > taskList.size()) {
+                    if (num < 1 || num > this.taskList.size()) {
                         System.out.printf("Sorry, I can't %smark task %d. You have %d items in your list!\n", done ? "" : "un", num, taskList.size());
                     } else {
-                        Task task = taskList.get(num - 1);
+                        Task task = this.taskList.get(num - 1);
                         if (task.done != done) {
                             task.done = done;
                             writeTasks();
@@ -82,16 +75,16 @@ public class SanYueQi {
             }
         }
 
-        public static void printTasks() {
+        public void printTasks() {
             int i = 1;
             System.out.println("Here are the tasks in your list:\n");
-            for (Task task : taskList) {
+            for (Task task : this.taskList) {
                 System.out.printf("%d. %s\n", i, task);
                 i += 1;
             }
         }
 
-        public static void deleteTask(String[] parts) {
+        public void deleteTask(String[] parts) {
             if (parts.length < 2) {
                 System.out.println("Sorry, you need to specify the task number!");
             } else if (parts.length > 2) {
@@ -99,21 +92,38 @@ public class SanYueQi {
             } else {
                 try {
                     int num = Integer.parseInt(parts[1]);
-                    if (num < 1 || num > taskList.size()) {
+                    if (num < 1 || num > this.taskList.size()) {
                         System.out.printf("Sorry, I can't delete task %d. You have %d items in your list!\n", num, taskList.size());
                     } else {
-                        Task task = taskList.get(num - 1);
-                        taskList.remove(num - 1);
+                        Task task = this.taskList.get(num - 1);
+                        this.taskList.remove(num - 1);
                         writeTasks();
                         System.out.println("Okay, I've deleted this task:");
                         System.out.printf("\t%s\n", task);
-                        System.out.printf("You currently have %d tasks in the list.\n", taskList.size());
+                        System.out.printf("You currently have %d tasks in the list.\n", this.taskList.size());
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("Sorry, you've entered an invalid task number!");
                 }
             }
         }
+    }
+
+    abstract private static class Task {
+        private String desc;
+        private boolean done;
+
+        private Task(boolean done, String desc) {
+            this.desc = desc;
+            this.done = done;
+        }
+
+        public String serialise(String s) {
+            return "\"" + s.replace("\"", "\"\"") + "\"";
+        }
+
+        abstract public String toCSV();
+
     }
 
     private static class ToDo extends Task {
@@ -123,7 +133,7 @@ public class SanYueQi {
 
         private ToDo(boolean done, String desc) {
             super(done, desc);
-            addTask(this);
+            masterTaskList.addTask(this);
         }
 
         @Override
@@ -146,7 +156,7 @@ public class SanYueQi {
                     if (i < parts.length - 1) desc.append(" ");
                 }
                 ToDo todo = new ToDo(desc.toString());
-                printNewTask(todo);
+                masterTaskList.printNewTask(todo);
             }
         }
     }
@@ -161,7 +171,7 @@ public class SanYueQi {
         private Deadline(boolean done, String desc, String dueDate) {
             super(done, desc);
             this.dueDate = dueDate;
-            addTask(this);
+            masterTaskList.addTask(this);
         }
 
         @Override
@@ -201,7 +211,7 @@ public class SanYueQi {
                             formattedDueDate = dueDate.toString();
                         }
                         deadline.dueDate = formattedDueDate;
-                        printNewTask(deadline);
+                        masterTaskList.printNewTask(deadline);
                     }
                     break;
                 } else {
@@ -228,7 +238,7 @@ public class SanYueQi {
             super(done, desc);
             this.from = from;
             this.to = to;
-            addTask(this);
+            masterTaskList.addTask(this);
         }
 
         @Override
@@ -283,7 +293,7 @@ public class SanYueQi {
                         }
                         event.from = formattedFrom;
                         event.to = formattedTo;
-                        printNewTask(event);
+                        masterTaskList.printNewTask(event);
                     }
                     break;
                 }
@@ -427,13 +437,13 @@ public class SanYueQi {
             System.out.println("____________________________________________________________\n");
             switch (parts[0]) {
                 case "bye" -> running = false;
-                case "list" -> Task.printTasks();
-                case "mark" -> Task.markTask(parts, true);
-                case "unmark" -> Task.markTask(parts, false);
+                case "list" -> masterTaskList.printTasks();
+                case "mark" -> masterTaskList.markTask(parts, true);
+                case "unmark" -> masterTaskList.markTask(parts, false);
                 case "todo" -> ToDo.makeToDo(parts);
                 case "deadline" -> Deadline.makeDeadline(parts);
                 case "event" -> Event.makeEvent(parts);
-                case "delete" -> Task.deleteTask(parts);
+                case "delete" -> masterTaskList.deleteTask(parts);
                 default -> System.out.println("Sorry, I don't understand your request!");
             }
             System.out.println("____________________________________________________________\n");
