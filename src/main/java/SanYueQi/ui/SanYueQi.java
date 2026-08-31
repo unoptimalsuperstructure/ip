@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class SanYueQi {
-    private static final TaskList masterTaskList = new TaskList();
+    static final TaskList masterTaskList = new TaskList();
 
     private static boolean parseLine(String line) {
         if (line.length() <= 4) return false;
@@ -79,7 +79,6 @@ public class SanYueQi {
             case 'T':
                 ToDo todo = new ToDo(done, args[0].toString());
                 masterTaskList.addTask(todo);
-                System.out.println(todo);
                 break;
             case 'D':
                 Deadline deadline = new Deadline(done, args[0].toString(), args[1].toString());

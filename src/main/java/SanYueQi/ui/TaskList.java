@@ -28,7 +28,7 @@ class TaskList {
         }
     }
 
-    public void printNewTask(Task task) {
+    public Task printNewTask(Task task) {
         if (task != null) {
             addTask(task);
             writeTasks();
@@ -36,6 +36,7 @@ class TaskList {
             System.out.printf("\t%s\n", task);
             System.out.printf("You currently have %d tasks in the list.\n", taskList.size());
         }
+        return task;
     }
 
     public int getNumOfTasks() {
