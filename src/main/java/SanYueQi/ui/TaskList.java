@@ -111,6 +111,41 @@ class TaskList {
     }
 
     /**
+     * Finds and prints all Tasks whose descriptions contain a keyword as a substring.
+     *
+     * @param parts The parts of a keyword.
+     */
+    public void findTasks(String[] parts) {
+        StringBuilder keyword = new StringBuilder();
+        boolean isFineRemoved = false;
+        for (String s : parts) {
+            if (isFineRemoved) {
+                keyword.append(s);
+                keyword.append(" ");
+            } else {
+                isFineRemoved = true;
+            }
+        }
+        keyword.deleteCharAt(keyword.length() - 1);
+        ArrayList<Task> results = new ArrayList<>();
+        for (Task task : this.taskList) {
+            if (task.getDesc().contains(keyword)) {
+                results.add(task);
+            }
+        }
+        if (!results.isEmpty()) {
+            int i = 1;
+            System.out.println("Here are the matching tasks in your list:\n");
+            for (Task task : results) {
+                System.out.printf("%d. %s\n", i, task);
+                i += 1;
+            }
+        } else {
+            System.out.println("Sorry, I couldn't find any matching tasks!");
+        }
+    }
+
+    /**
      * Deletes a Task.
      *
      * @param parts The parts of a Task.

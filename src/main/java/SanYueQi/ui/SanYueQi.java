@@ -146,6 +146,7 @@ public class SanYueQi {
                 case "todo" -> masterTaskList.addAndWriteTask(ToDo.makeToDo(parts));
                 case "deadline" -> masterTaskList.addAndWriteTask(Deadline.makeDeadline(parts));
                 case "event" -> masterTaskList.addAndWriteTask(Event.makeEvent(parts));
+                case "find" -> masterTaskList.findTasks(parts);
                 case "delete" -> masterTaskList.deleteTask(parts);
                 default -> System.out.println("Sorry, I don't understand your request!");
             }
