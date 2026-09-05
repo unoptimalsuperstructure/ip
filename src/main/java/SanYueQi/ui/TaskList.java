@@ -23,7 +23,7 @@ class TaskList {
     public void writeTasks() {
         ArrayList<String> serialisedTasks = new ArrayList<>();
         for (Task task : this.taskList) {
-            serialisedTasks.add(task.toCSV());
+            serialisedTasks.add(task.toCsv());
         }
         try {
             Files.write(Paths.get("logbook.csv"), serialisedTasks);

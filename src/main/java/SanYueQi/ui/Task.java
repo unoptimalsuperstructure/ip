@@ -36,5 +36,5 @@ abstract class Task {
      *
      * @return The serialized string.
      */
-    public abstract String toCSV();
+    public abstract String toCsv();
 }

@@ -1,8 +1,8 @@
 package sanyueqi.ui;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.LocalDate;
 
 class Deadline extends Task {
     private String dueDate;
@@ -27,7 +27,7 @@ class Deadline extends Task {
      * @return The serialized string.
      */
     @Override
-    public String toCSV() {
+    public String toCsv() {
         return String.format("D,%s,%s,%s", super.isDone() ? "1" : "0", super.serialise(super.getDesc()), super.serialise(this.dueDate));
     }
 

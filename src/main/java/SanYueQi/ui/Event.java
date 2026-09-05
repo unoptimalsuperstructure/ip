@@ -1,12 +1,12 @@
 package sanyueqi.ui;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.LocalDate;
 
 class Event extends Task {
-    private String from;
-    private String to;
+    private String startTime;
+    private String endTime;
 
     public Event(String desc) {
         super(false, desc);
@@ -14,13 +14,13 @@ class Event extends Task {
 
     public Event(boolean done, String desc, String from, String to) {
         super(done, desc);
-        this.from = from;
-        this.to = to;
+        this.startTime = from;
+        this.endTime = to;
     }
 
     @Override
     public String toString() {
-        return String.format("[E][%s] %s (from: %s to: %s)", super.isDone() ? "X" : " ", super.getDesc(), this.from, this.to);
+        return String.format("[E][%s] %s (from: %s to: %s)", super.isDone() ? "X" : " ", super.getDesc(), this.startTime, this.endTime);
     }
 
     /**
@@ -29,8 +29,8 @@ class Event extends Task {
      * @return The serialized string.
      */
     @Override
-    public String toCSV() {
-        return String.format("E,%s,%s,%s,%s", super.isDone() ? "1" : "0", super.serialise(super.getDesc()), super.serialise(this.from), super.serialise(this.to));
+    public String toCsv() {
+        return String.format("E,%s,%s,%s,%s", super.isDone() ? "1" : "0", super.serialise(super.getDesc()), super.serialise(this.startTime), super.serialise(this.endTime));
     }
 
     /**
@@ -79,8 +79,8 @@ class Event extends Task {
                     } catch (DateTimeParseException e) {
                         formattedTo = to.toString();
                     }
-                    event.from = formattedFrom;
-                    event.to = formattedTo;
+                    event.startTime = formattedFrom;
+                    event.endTime = formattedTo;
                     return event;
                 }
                 break;
