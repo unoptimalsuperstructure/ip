@@ -1,4 +1,4 @@
-package SanYueQi.ui;
+package sanyueqi.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,9 +22,9 @@ public class SanYueQi {
         char type;
         boolean done;
         int index = 0;
-        String temp1 = new String(new char[]{line.charAt(0), line.charAt(1)});
-        String temp2 = new String(new char[]{line.charAt(2), line.charAt(3)});
-        switch (temp1) {
+        String typeToken = line.substring(0,2);
+        String doneToken = line.substring(2,4);
+        switch (typeToken) {
             case "T,":
                 type = 'T';
                 break;
@@ -37,7 +37,7 @@ public class SanYueQi {
             default:
                 return false;
         }
-        switch (temp2) {
+        switch (doneToken) {
             case "0,":
                 done = false;
                 break;
@@ -125,21 +125,21 @@ public class SanYueQi {
         System.out.printf("Today's date is %s and the current time is %s.", date, time);
         System.out.println("\nAre you here to play with me?");
         System.out.println("____________________________________________________________\n");
-        String prompt;
+        String command;
         boolean running = true;
         Scanner scanner = new Scanner(System.in);
         while (running) {
-            prompt = scanner.nextLine();
-            String[] parts = prompt.split("\\s+");
+            command = scanner.nextLine();
+            String[] parts = command.split("\\s+");
             System.out.println("____________________________________________________________\n");
             switch (parts[0]) {
                 case "bye" -> running = false;
                 case "list" -> masterTaskList.printTasks();
                 case "mark" -> masterTaskList.markTask(parts, true);
                 case "unmark" -> masterTaskList.markTask(parts, false);
-                case "todo" -> masterTaskList.printNewTask(ToDo.makeToDo(parts));
-                case "deadline" -> masterTaskList.printNewTask(Deadline.makeDeadline(parts));
-                case "event" -> masterTaskList.printNewTask(Event.makeEvent(parts));
+                case "todo" -> masterTaskList.addAndWriteTask(ToDo.makeToDo(parts));
+                case "deadline" -> masterTaskList.addAndWriteTask(Deadline.makeDeadline(parts));
+                case "event" -> masterTaskList.addAndWriteTask(Event.makeEvent(parts));
                 case "delete" -> masterTaskList.deleteTask(parts);
                 default -> System.out.println("Sorry, I don't understand your request!");
             }

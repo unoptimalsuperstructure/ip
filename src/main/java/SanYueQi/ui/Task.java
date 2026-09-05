@@ -1,4 +1,4 @@
-package SanYueQi.ui;
+package sanyueqi.ui;
 
 abstract class Task {
     private String desc;
@@ -25,5 +25,5 @@ abstract class Task {
         return "\"" + s.replace("\"", "\"\"") + "\"";
     }
 
-    abstract public String toCSV();
+    public abstract String toCSV();
 }

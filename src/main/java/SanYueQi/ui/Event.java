@@ -1,4 +1,4 @@
-package SanYueQi.ui;
+package sanyueqi.ui;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,19 +31,19 @@ class Event extends Task {
     public static Event makeEvent(String[] parts) {
         StringBuilder desc = new StringBuilder();
         int i = 1;
-        int foundFrom = -1;
+        int foundIndex = -1;
         while (i < parts.length) {
             if (parts[i].equals("/to")) {
-                if (foundFrom == -1) {
+                if (foundIndex == -1) {
                     System.out.println("Sorry! End time must be indicated after start time!");
-                } else if (i == foundFrom + 1) {
+                } else if (i == foundIndex + 1) {
                     System.out.println("Sorry! Starting time cannot be empty!");
                 } else if (i == parts.length - 1) {
                     System.out.println("Sorry! Ending time cannot be empty!");
                 } else {
                     Event event = new Event(desc.toString());
                     StringBuilder from = new StringBuilder();
-                    for (int j = foundFrom + 1; j < i; j++) {
+                    for (int j = foundIndex + 1; j < i; j++) {
                         from.append(parts[j]);
                         if (j < i - 1) from.append(" ");
                     }
@@ -74,15 +74,15 @@ class Event extends Task {
                 }
                 break;
             }
-            else if (parts[i].equals("/from") && foundFrom == -1) {
+            else if (parts[i].equals("/from") && foundIndex == -1) {
                 desc.deleteCharAt(desc.length() - 1);
                 if (i == 1) {
                     System.out.println("Sorry! Description cannot be empty!");
                     break;
                 } else {
-                    foundFrom = i;
+                    foundIndex = i;
                 }
-            } else if (foundFrom == -1) {
+            } else if (foundIndex == -1) {
                 desc.append(parts[i]);
                 desc.append(" ");
             }

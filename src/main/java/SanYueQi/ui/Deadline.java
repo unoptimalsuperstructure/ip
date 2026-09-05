@@ -1,4 +1,4 @@
-package SanYueQi.ui;
+package sanyueqi.ui;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

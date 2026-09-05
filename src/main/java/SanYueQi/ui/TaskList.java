@@ -1,4 +1,4 @@
-package SanYueQi.ui;
+package sanyueqi.ui;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,15 +28,22 @@ class TaskList {
         }
     }
 
-    public Task printNewTask(Task task) {
+    public void addAndWriteTask(Task task) {
         if (task != null) {
             addTask(task);
             writeTasks();
-            System.out.println("Okay! I've added a new task:\n");
-            System.out.printf("\t%s\n", task);
-            System.out.printf("You currently have %d tasks in the list.\n", taskList.size());
+            printNewTask(task);
         }
-        return task;
+    }
+
+    public String printNewTask(Task task) {
+        if (task != null) {
+            String s = String.format("Okay! I've added a new task:\n\t%s\nYou currently have %d tasks in the list.\n", task, taskList.size());
+            System.out.print(s);
+            return s;
+        } else {
+            return null;
+        }
     }
 
     public int getNumOfTasks() {
