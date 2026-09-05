@@ -21,11 +21,22 @@ class Deadline extends Task {
         return String.format("[D][%s] %s (by: %s)", super.isDone() ? "X" : " ", super.getDesc(), this.dueDate);
     }
 
+    /**
+     * Serializes a deadline for writing to a CSV.
+     *
+     * @return The serialized string.
+     */
     @Override
     public String toCSV() {
         return String.format("D,%s,%s,%s", super.isDone() ? "1" : "0", super.serialise(super.getDesc()), super.serialise(this.dueDate));
     }
 
+    /**
+     * Makes a 'deadline' type Task.
+     *
+     * @param parts The parts of the deadline.
+     * @return A deadline instance.
+     */
     public static Deadline makeDeadline(String[] parts) {
         StringBuilder desc = new StringBuilder();
         int i = 1;

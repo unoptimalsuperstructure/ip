@@ -21,9 +21,20 @@ abstract class Task {
         this.done = done;
     }
 
+    /**
+     * Serializes a description.
+     *
+     * @param s The string to serialize.
+     * @return The serialized string.
+     */
     public String serialise(String s) {
         return "\"" + s.replace("\"", "\"\"") + "\"";
     }
 
+    /**
+     * Serializes a task for writing to a CSV.
+     *
+     * @return The serialized string.
+     */
     public abstract String toCSV();
 }

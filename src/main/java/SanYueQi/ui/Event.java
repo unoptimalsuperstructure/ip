@@ -23,11 +23,22 @@ class Event extends Task {
         return String.format("[E][%s] %s (from: %s to: %s)", super.isDone() ? "X" : " ", super.getDesc(), this.from, this.to);
     }
 
+    /**
+     * Serializes an event for writing to a CSV.
+     *
+     * @return The serialized string.
+     */
     @Override
     public String toCSV() {
         return String.format("E,%s,%s,%s,%s", super.isDone() ? "1" : "0", super.serialise(super.getDesc()), super.serialise(this.from), super.serialise(this.to));
     }
 
+    /**
+     * Makes an 'event' type Task.
+     *
+     * @param parts The parts of the event.
+     * @return An event instance.
+     */
     public static Event makeEvent(String[] parts) {
         StringBuilder desc = new StringBuilder();
         int i = 1;

@@ -16,6 +16,10 @@ class TaskList {
         this.taskList.add(task);
     }
 
+    /**
+     * Serializes each task into comma-separated values after the task list is successfully updated internally,
+     * Then, the tasks are written to the master CSV.
+     */
     public void writeTasks() {
         ArrayList<String> serialisedTasks = new ArrayList<>();
         for (Task task : this.taskList) {
@@ -28,6 +32,11 @@ class TaskList {
         }
     }
 
+    /**
+     * Adds a task to the list if it is valid, writes it to the master CSV, and calls the print function.
+     *
+     * @param task The task to work with.
+     */
     public void addAndWriteTask(Task task) {
         if (task != null) {
             addTask(task);
@@ -36,6 +45,12 @@ class TaskList {
         }
     }
 
+    /**
+     * Prints a formatted string for a successfully added task.
+     *
+     * @param task The task to work with.
+     * @return The string for testing purposes.
+     */
     public String printNewTask(Task task) {
         if (task != null) {
             String s = String.format("Okay! I've added a new task:\n\t%s\nYou currently have %d tasks in the list.\n", task, taskList.size());
@@ -50,6 +65,12 @@ class TaskList {
         return this.taskList.size();
     }
 
+    /**
+     * Marks a Task as either done or not done.
+     *
+     * @param parts The parts of a Task.
+     * @param done Whether a Task should be marked as done or not done.
+     */
     public void markTask(String[] parts, boolean done) {
         if (parts.length < 2) {
             System.out.println("Sorry, you need to specify the task number!");
@@ -77,6 +98,9 @@ class TaskList {
         }
     }
 
+    /**
+     * Prints the task list.
+     */
     public void printTasks() {
         int i = 1;
         System.out.println("Here are the tasks in your list:\n");
@@ -86,6 +110,11 @@ class TaskList {
         }
     }
 
+    /**
+     * Deletes a Task.
+     *
+     * @param parts The parts of a Task.
+     */
     public void deleteTask(String[] parts) {
         if (parts.length < 2) {
             System.out.println("Sorry, you need to specify the task number!");

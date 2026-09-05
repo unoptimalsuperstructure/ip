@@ -14,11 +14,22 @@ class ToDo extends Task {
         return String.format("[T][%s] %s", super.isDone() ? "X" : " ", super.getDesc());
     }
 
+    /**
+     * Serializes a to-do for writing to a CSV.
+     *
+     * @return The serialized string.
+     */
     @Override
     public String toCSV() {
         return String.format("T,%s,%s", super.isDone() ? "1" : "0", super.serialise(super.getDesc()));
     }
 
+    /**
+     * Makes a 'to-do' type Task.
+     *
+     * @param parts The parts of the to-do.
+     * @return A to-do instance.
+     */
     public static ToDo makeToDo(String[] parts) {
         if (parts.length == 1) {
             System.out.println("Sorry! Description cannot be empty!");

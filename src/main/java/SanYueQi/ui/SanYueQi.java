@@ -12,6 +12,12 @@ import java.nio.file.Paths;
 public class SanYueQi {
     static final TaskList masterTaskList = new TaskList();
 
+    /**
+     * Parses a line in the master CSV file and checks whether it is valid.
+     *
+     * @param line Line in the master CSV file to parse.
+     * @return Whether the line is valid.
+     */
     private static boolean parseLine(String line) {
         if (line.length() <= 4) return false;
         boolean quote = false;
