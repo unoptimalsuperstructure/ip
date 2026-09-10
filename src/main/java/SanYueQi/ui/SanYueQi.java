@@ -12,6 +12,39 @@ import java.util.Scanner;
 public class SanYueQi {
     static final TaskList masterTaskList = new TaskList();
 
+    public SanYueQi() {
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(Paths.get("logbook.csv"));
+            System.out.println("Existing logbook found and loaded. Parsing...");
+        } catch (IOException e1) {
+            try {
+                Files.createFile(Paths.get("logbook.csv"));
+                lines = new ArrayList<>();
+                System.out.println("Existing logbook not found. New logbook created.");
+            } catch (IOException e2) {
+                System.out.println("Critical error: Unable to load or create logbook");
+                return;
+            }
+        }
+        for (int i = 0; i < lines.size(); i++) {
+            if (!parseLine(lines.get(i))) {
+                System.out.printf("Critical error: Malformed logbook at line %d", i + 1);
+                return;
+            }
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        String date = now.format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"));
+        String time = now.format(DateTimeFormatter.ofPattern("HH:mm"));
+
+        System.out.println("____________________________________________________________\n");
+        System.out.println("Welcome back! It's March.");
+        System.out.printf("Today's date is %s and the current time is %s.", date, time);
+        System.out.println("\nAre you here to play with me?");
+        System.out.println("____________________________________________________________\n");
+    }
+
     /**
      * Parses a line in the master CSV file and checks whether it is valid.
      *
@@ -100,60 +133,23 @@ public class SanYueQi {
         return true;
     }
 
-    public static void main(String[] args) {
-        List<String> lines;
-        try {
-            lines = Files.readAllLines(Paths.get("logbook.csv"));
-            System.out.println("Existing logbook found and loaded. Parsing...");
-        } catch (IOException e1) {
-            try {
-                Files.createFile(Paths.get("logbook.csv"));
-                lines = new ArrayList<>();
-                System.out.println("Existing logbook not found. New logbook created.");
-            } catch (IOException e2) {
-                System.out.println("Critical error: Unable to load or create logbook");
-                return;
-            }
-        }
-        for (int i = 0; i < lines.size(); i++) {
-            if (!parseLine(lines.get(i))) {
-                System.out.printf("Critical error: Malformed logbook at line %d", i + 1);
-                return;
-            }
-        }
+    public String getResponse(String command) {
+        String[] parts = command.split("\\s+");
 
-        LocalDateTime now = LocalDateTime.now();
-        String date = now.format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"));
-        String time = now.format(DateTimeFormatter.ofPattern("HH:mm"));
-
-        System.out.println("____________________________________________________________\n");
-        System.out.println("Welcome back! It's March.");
-        System.out.printf("Today's date is %s and the current time is %s.", date, time);
-        System.out.println("\nAre you here to play with me?");
-        System.out.println("____________________________________________________________\n");
-        String command;
-        boolean running = true;
-        Scanner scanner = new Scanner(System.in);
-        while (running) {
-            command = scanner.nextLine();
-            String[] parts = command.split("\\s+");
-            System.out.println("____________________________________________________________\n");
-            switch (parts[0]) {
-                case "bye" -> running = false;
-                case "list" -> masterTaskList.printTasks();
-                case "mark" -> masterTaskList.markTask(parts, true);
-                case "unmark" -> masterTaskList.markTask(parts, false);
-                case "todo" -> masterTaskList.addAndWriteTask(ToDo.makeToDo(parts));
-                case "deadline" -> masterTaskList.addAndWriteTask(Deadline.makeDeadline(parts));
-                case "event" -> masterTaskList.addAndWriteTask(Event.makeEvent(parts));
-                case "find" -> masterTaskList.findTasks(parts);
-                case "delete" -> masterTaskList.deleteTask(parts);
-                default -> System.out.println("Sorry, I don't understand your request!");
-            }
-            System.out.println("____________________________________________________________\n");
-        }
-        System.out.println("____________________________________________________________\n");
-        System.out.println("Thank you for today! See you again soon!");
-        System.out.println("____________________________________________________________\n");
+        return switch (parts[0]) {
+            case "bye" -> "Bye. Hope to see you again soon!";
+            case "list" -> masterTaskList.printTasks();
+            case "mark" -> masterTaskList.markTask(parts, true);
+            case "unmark" -> masterTaskList.markTask(parts, false);
+            case "todo" -> masterTaskList.addAndWriteTask(ToDo.makeToDo(parts));
+            case "deadline" -> masterTaskList.addAndWriteTask(Deadline.makeDeadline(parts));
+            case "event" -> masterTaskList.addAndWriteTask(Event.makeEvent(parts));
+            case "find" -> masterTaskList.findTasks(parts);
+            case "delete" -> masterTaskList.deleteTask(parts);
+            default -> "Sorry, I don't understand your request!";
+        };
+        //System.out.println("____________________________________________________________\n");
+        //System.out.println("Thank you for today! See you again soon!");
+        //System.out.println("____________________________________________________________\n");
     }
 }
