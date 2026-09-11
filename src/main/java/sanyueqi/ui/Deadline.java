@@ -37,16 +37,18 @@ class Deadline extends Task {
      * @param parts The parts of the deadline.
      * @return A deadline instance.
      */
-    public static Deadline makeDeadline(String[] parts) {
+    public static Deadline makeDeadline(String[] parts) throws SYQException {
         StringBuilder desc = new StringBuilder();
         int i = 1;
         while (i < parts.length) {
             if (parts[i].equals("/by")) {
-                desc.deleteCharAt(desc.length() - 1);
-                if (i == 1) {
-                    System.out.println("Sorry! Description cannot be empty!");
-                } else if (i == parts.length - 1) {
-                    System.out.println("Sorry! Deadline cannot be empty!");
+                if (!desc.isEmpty()) {
+                    desc.deleteCharAt(desc.length() - 1);
+                } else {
+                    throw new SYQException("Sorry! Description cannot be empty!");
+                }
+                if (i == parts.length - 1) {
+                    throw new SYQException("Sorry! Deadline cannot be empty!");
                 } else {
                     Deadline deadline = new Deadline(desc.toString());
                     StringBuilder dueDate = new StringBuilder();
@@ -66,7 +68,6 @@ class Deadline extends Task {
                     deadline.dueDate = formattedDueDate;
                     return deadline;
                 }
-                break;
             } else {
                 desc.append(parts[i]);
             }
@@ -74,8 +75,9 @@ class Deadline extends Task {
             i += 1;
         }
         if (i == parts.length) {
-            System.out.println("Sorry! You didn't indicate the deadline!");
+            throw new SYQException("Sorry! You didn't indicate the deadline!");
         }
+        assert false;
         return null;
     }
 }

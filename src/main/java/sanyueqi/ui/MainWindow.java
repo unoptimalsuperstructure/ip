@@ -1,5 +1,6 @@
 package sanyueqi.ui;
 
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -7,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 /**
  * Controller for the main GUI.
@@ -42,13 +44,25 @@ public class MainWindow extends AnchorPane {
         syq = s;
     }
 
+    public void makeInitResponseStatusDialog() {
+        String initResponseStatus = syq.getInitResponseStatus();
+        dialogContainer.getChildren().add(
+                DialogBox.getDukeDialog(initResponseStatus, dukeImage));
+    }
+
+    public void makeFinalResponseStatusDialog() {
+        String finalResponseStatus = syq.getFinalResponseStatus();
+        dialogContainer.getChildren().add(
+                DialogBox.getDukeDialog(finalResponseStatus, dukeImage));
+    }
+
     /**
      * Creates two dialog boxes, one echoing user input and the other
      * containing Syq's reply, then appends them to the dialog container.
      * Clears the user input after processing.
      */
     @FXML
-    private void handleUserInput() {
+    private void handleUserInput() throws InterruptedException {
         String input = userInput.getText();
         String response = syq.getResponse(input);
 
@@ -56,6 +70,12 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getUserDialog(input, userImage),
                 DialogBox.getDukeDialog(response, dukeImage)
         );
+
+        if (response.equals("Bye. Hope to see you again soon!")) {
+            PauseTransition pause = new PauseTransition(Duration.seconds(1));
+            pause.setOnFinished(event -> System.exit(0));
+            pause.play();
+        }
 
         userInput.clear();
     }

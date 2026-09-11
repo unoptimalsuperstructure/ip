@@ -26,6 +26,10 @@ application {
     mainClass.set("sanyueqi.ui.Main")
 }
 
+tasks.named<JavaExec>("run") {
+    enableAssertions = true
+}
+
 tasks.test {
     useJUnitPlatform()
 }

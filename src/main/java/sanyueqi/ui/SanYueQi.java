@@ -11,38 +11,67 @@ import java.util.Scanner;
 
 public class SanYueQi {
     static final TaskList masterTaskList = new TaskList();
+    List<String> lines;
+    int initResponseCode;
+    int errorLine;
+
+    private static LocalDateTime now = LocalDateTime.now();
+    private static String startDate = now.format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"));
+    private static String startTime = now.format(DateTimeFormatter.ofPattern("HH:mm"));
+
+    private static final String GREETING = String.format("""
+            Welcome back! It's March.
+            Today's date is %s and the current time is %s.
+            Are you here to play with me?""", startDate, startTime);
 
     public SanYueQi() {
-        List<String> lines;
+        this.initResponseCode = 0;
+        this.errorLine = 0;
+    }
+
+    public void readCsv() {
         try {
-            lines = Files.readAllLines(Paths.get("logbook.csv"));
-            System.out.println("Existing logbook found and loaded. Parsing...");
+            this.lines = Files.readAllLines(Paths.get("logbook.csv"));
         } catch (IOException e1) {
             try {
                 Files.createFile(Paths.get("logbook.csv"));
-                lines = new ArrayList<>();
-                System.out.println("Existing logbook not found. New logbook created.");
+                this.lines = new ArrayList<>();
+                this.initResponseCode = 1;
             } catch (IOException e2) {
-                System.out.println("Critical error: Unable to load or create logbook");
+                this.initResponseCode = 2;
+            }
+        }
+    }
+
+    public void parseCsv() {
+        for (int i = 0; i < this.lines.size(); i++) {
+            if (!parseLine(this.lines.get(i))) {
+                this.errorLine = i + 1;
                 return;
             }
         }
-        for (int i = 0; i < lines.size(); i++) {
-            if (!parseLine(lines.get(i))) {
-                System.out.printf("Critical error: Malformed logbook at line %d", i + 1);
-                return;
-            }
-        }
+    }
 
-        LocalDateTime now = LocalDateTime.now();
-        String date = now.format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"));
-        String time = now.format(DateTimeFormatter.ofPattern("HH:mm"));
+    /**
+     * Returns the initial response status to the GUI handler.
+     */
+    public String getInitResponseStatus() {
+        readCsv();
+        return this.initResponseCode == 0
+            ? "Existing logbook found and loaded. Parsing..."
+            : this.initResponseCode == 1
+            ? "Existing logbook not found. New logbook created."
+            : "Critical error: Unable to load or create logbook";
+    }
 
-        System.out.println("____________________________________________________________\n");
-        System.out.println("Welcome back! It's March.");
-        System.out.printf("Today's date is %s and the current time is %s.", date, time);
-        System.out.println("\nAre you here to play with me?");
-        System.out.println("____________________________________________________________\n");
+    /**
+     * Returns the final response status to the GUI handler.
+     */
+    public String getFinalResponseStatus() {
+        parseCsv();
+        return this.errorLine == 0
+            ? GREETING
+            : String.format("Critical error: Malformed logbook at line %d", this.errorLine);
     }
 
     /**
@@ -104,6 +133,7 @@ public class SanYueQi {
                                 index = 3;
                             }
                         } else if (line.charAt(i) == '"') {
+                            assert (index >= 0 && index <= 3);
                             args[index].append('"');
                         } else {
                             return false;
@@ -111,6 +141,7 @@ public class SanYueQi {
                     }
                 }
             } else {
+                assert (index >= 0 && index <= 3);
                 args[index].append(c);
             }
         }
@@ -136,20 +167,21 @@ public class SanYueQi {
     public String getResponse(String command) {
         String[] parts = command.split("\\s+");
 
-        return switch (parts[0]) {
-            case "bye" -> "Bye. Hope to see you again soon!";
-            case "list" -> masterTaskList.printTasks();
-            case "mark" -> masterTaskList.markTask(parts, true);
-            case "unmark" -> masterTaskList.markTask(parts, false);
-            case "todo" -> masterTaskList.addAndWriteTask(ToDo.makeToDo(parts));
-            case "deadline" -> masterTaskList.addAndWriteTask(Deadline.makeDeadline(parts));
-            case "event" -> masterTaskList.addAndWriteTask(Event.makeEvent(parts));
-            case "find" -> masterTaskList.findTasks(parts);
-            case "delete" -> masterTaskList.deleteTask(parts);
-            default -> "Sorry, I don't understand your request!";
-        };
-        //System.out.println("____________________________________________________________\n");
-        //System.out.println("Thank you for today! See you again soon!");
-        //System.out.println("____________________________________________________________\n");
+        try {
+            return switch (parts[0]) {
+                case "bye" -> "Bye. Hope to see you again soon!";
+                case "list" -> masterTaskList.printTasks();
+                case "mark" -> masterTaskList.markTask(parts, true);
+                case "unmark" -> masterTaskList.markTask(parts, false);
+                case "todo" -> masterTaskList.addAndWriteTask(ToDo.makeToDo(parts));
+                case "deadline" -> masterTaskList.addAndWriteTask(Deadline.makeDeadline(parts));
+                case "event" -> masterTaskList.addAndWriteTask(Event.makeEvent(parts));
+                case "find" -> masterTaskList.findTasks(parts);
+                case "delete" -> masterTaskList.deleteTask(parts);
+                default -> "Sorry, I don't understand your request!";
+            };
+        } catch (SYQException e) {
+            return e.toString();
+        }
     }
 }

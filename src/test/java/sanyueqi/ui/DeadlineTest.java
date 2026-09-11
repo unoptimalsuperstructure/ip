@@ -4,11 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class EventTest {
+public class DeadlineTest {
     @Test
     void normalTestPrintMessage() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -17,10 +15,13 @@ public class EventTest {
         try {
             System.setOut(new PrintStream(output));
 
-            String s = SanYueQi.masterTaskList.printNewTask(Event.makeEvent("event 3 /from 4 /to 5".split("\\s+")));
+            String s = SanYueQi.masterTaskList.printNewTask(Deadline.makeDeadline("deadline 3 /by 4".split("\\s+")));
 
             assertNotNull(s);
-            assertTrue(s.contains("[E][ ] 3 (from: 4 to: 5)"));
+            assertTrue(s.contains("[D][ ] 3 (by: 4)"));
+
+        } catch (SYQException e) {
+            fail();
 
         } finally {
             System.setOut(originalOut);
@@ -35,9 +36,12 @@ public class EventTest {
         try {
             System.setOut(new PrintStream(output));
 
-            String s = SanYueQi.masterTaskList.printNewTask(Event.makeEvent("event 3 /to 4 /from 5".split("\\s+")));
+            String s = SanYueQi.masterTaskList.printNewTask(Deadline.makeDeadline("deadline 3 by 4".split("\\s+")));
 
             assertNull(s);
+
+        } catch (SYQException e) {
+            assertTrue(true);
 
         } finally {
             System.setOut(originalOut);
@@ -52,10 +56,13 @@ public class EventTest {
         try {
             System.setOut(new PrintStream(output));
 
-            String s = SanYueQi.masterTaskList.printNewTask(Event.makeEvent("event  todo  deadline  !#$ /   /from/from /by /from \\1\" /to   /to 2\\\"".split("\\s+")));
+            String s = SanYueQi.masterTaskList.printNewTask(Deadline.makeDeadline("deadline  event  todo  !#$ /   /from/from /by /from \\1\" /to   /to 2\\\"".split("\\s+")));
 
             assertNotNull(s);
-            assertTrue(s.contains("[E][ ] todo deadline !#$ / /from/from /by (from: \\1\" to: /to 2\\\")"));
+            assertTrue(s.contains("[D][ ] event todo !#$ / /from/from (by: /from \\1\" /to /to 2\\\")"));
+
+        } catch (SYQException e) {
+            fail();
 
         } finally {
             System.setOut(originalOut);
