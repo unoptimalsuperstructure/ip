@@ -75,27 +75,26 @@ class TaskList {
             return "Sorry, you need to specify the task number!";
         } else if (parts.length > 2) {
             return "Sorry, you've specified too many inputs!";
-        } else {
-            try {
-                int num = Integer.parseInt(parts[1]);
-                if (num < 1 || num > this.taskList.size()) {
-                    return String.format("Sorry, I can't %smark task %d. You have %d items in your list!\n", done ? "" : "un", num, taskList.size());
-                } else {
-                    StringBuilder s;
-                    Task task = this.taskList.get(num - 1);
-                    if (task.isDone() != done) {
-                        task.markDone(done);
-                        writeTasks();
-                        s = new StringBuilder(done ? "Great job on completing this task!" : "Okay, I've marked this task as not done yet:");
-                    } else {
-                        s = new StringBuilder(done ? "You've already marked the following task as done!" : "This task is already currently marked as not done yet!");
-                    }
-                    s.append(String.format("\t%s\n", task));
-                    return s.toString();
-                }
-            } catch (NumberFormatException e) {
-                return "Sorry, you've entered an invalid task number!";
+        }
+        try {
+            int num = Integer.parseInt(parts[1]);
+            if (num < 1 || num > this.taskList.size()) {
+                return String.format("Sorry, I can't %smark task %d. You have %d items in your list!\n",
+                                     done ? "" : "un", num, taskList.size());
             }
+            Task task = this.taskList.get(num - 1);
+            String taskMessage = String.format("\n\t%s\n", task);
+            if (task.isDone() != done) {
+                task.markDone(done);
+                writeTasks();
+                return String.format(done ? "Great job on completing this task!%s"
+                                          : "Okay, I've marked this task as not done yet:%s", taskMessage);
+            } else {
+                return String.format(done ? "You've already marked the following task as done!%s"
+                                          : "This task is already currently marked as not done yet!%s", taskMessage);
+            }
+        } catch (NumberFormatException e) {
+            return "Sorry, you've entered an invalid task number!";
         }
     }
 
@@ -106,7 +105,7 @@ class TaskList {
         StringBuilder s = new StringBuilder("Here are the tasks in your list:\n");
         int i = 1;
         for (Task task : this.taskList) {
-           s.append(String.format("%d. %s\n", i, task));
+            s.append(String.format("%d. %s\n", i, task));
             i += 1;
         }
         return s.toString();
@@ -128,6 +127,9 @@ class TaskList {
                 isFindRemoved = true;
             }
         }
+
+        if (keyword.isEmpty()) return "Sorry! Search keyword cannot be empty!";
+
         keyword.deleteCharAt(keyword.length() - 1);
         ArrayList<Task> results = new ArrayList<>();
         for (Task task : this.taskList) {
@@ -135,6 +137,7 @@ class TaskList {
                 results.add(task);
             }
         }
+
         if (!results.isEmpty()) {
             StringBuilder s = new StringBuilder("Here are the matching tasks in your list:\n");
             int i = 1;
@@ -143,6 +146,7 @@ class TaskList {
                 i += 1;
             }
             return s.toString();
+
         } else {
             return "Sorry, I couldn't find any matching tasks!";
         }
@@ -158,20 +162,22 @@ class TaskList {
             return "Sorry, you need to specify the task number!";
         } else if (parts.length > 2) {
             return "Sorry, you've specified too many inputs!";
-        } else {
-            try {
-                int num = Integer.parseInt(parts[1]);
-                if (num < 1 || num > this.taskList.size()) {
-                    return String.format("Sorry, I can't delete task %d. You have %d items in your list!\n", num, taskList.size());
-                } else {
-                    Task task = this.taskList.get(num - 1);
-                    this.taskList.remove(num - 1);
-                    writeTasks();
-                    return String.format("Okay, I've deleted this task:\n\t%s\nYou currently have %d tasks in the list.", task, this.taskList.size());
-                }
-            } catch (NumberFormatException e) {
-                return "Sorry, you've entered an invalid task number!";
+        }
+
+        try {
+            int num = Integer.parseInt(parts[1]);
+            if (num < 1 || num > this.taskList.size()) {
+                return String.format("Sorry, I can't delete task %d. You have %d items in your list!\n",
+                                     num, taskList.size());
             }
+            Task task = this.taskList.get(num - 1);
+            this.taskList.remove(num - 1);
+            writeTasks();
+            return String.format("Okay, I've deleted this task:\n\t%s\nYou currently have %d tasks in the list.",
+                                 task, this.taskList.size());
+
+        } catch (NumberFormatException e) {
+            return "Sorry, you've entered an invalid task number!";
         }
     }
 }

@@ -51,38 +51,37 @@ class Event extends Task {
                     throw new SYQException("Sorry! Starting time cannot be empty!");
                 } else if (i == parts.length - 1) {
                     throw new SYQException("Sorry! Ending time cannot be empty!");
-                } else {
-                    Event event = new Event(desc.toString());
-                    StringBuilder from = new StringBuilder();
-                    for (int j = foundIndex + 1; j < i; j++) {
-                        from.append(parts[j]);
-                        if (j < i - 1) from.append(" ");
-                    }
-                    StringBuilder to = new StringBuilder();
-                    for (int k = i + 1; k < parts.length; k++) {
-                        to.append(parts[k]);
-                        if (k < parts.length - 1) to.append(" ");
-                    }
-                    String formattedFrom;
-                    String formattedTo;
-                    DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
-                    try {
-                        formattedFrom = LocalDate.parse(from.toString(), inputFormatter)
-                                .format(outputFormatter);
-                    } catch (DateTimeParseException e) {
-                        formattedFrom = from.toString();
-                    }
-                    try {
-                        formattedTo = LocalDate.parse(to.toString(), inputFormatter)
-                                .format(outputFormatter);
-                    } catch (DateTimeParseException e) {
-                        formattedTo = to.toString();
-                    }
-                    event.startTime = formattedFrom;
-                    event.endTime = formattedTo;
-                    return event;
                 }
+                Event event = new Event(desc.toString());
+                StringBuilder from = new StringBuilder();
+                for (int j = foundIndex + 1; j < i; j++) {
+                    from.append(parts[j]);
+                    if (j < i - 1) from.append(" ");
+                }
+                StringBuilder to = new StringBuilder();
+                for (int k = i + 1; k < parts.length; k++) {
+                    to.append(parts[k]);
+                    if (k < parts.length - 1) to.append(" ");
+                }
+                String formattedFrom;
+                String formattedTo;
+                DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+                try {
+                    formattedFrom = LocalDate.parse(from.toString(), inputFormatter)
+                            .format(outputFormatter);
+                } catch (DateTimeParseException e) {
+                    formattedFrom = from.toString();
+                }
+                try {
+                    formattedTo = LocalDate.parse(to.toString(), inputFormatter)
+                            .format(outputFormatter);
+                } catch (DateTimeParseException e) {
+                    formattedTo = to.toString();
+                }
+                event.startTime = formattedFrom;
+                event.endTime = formattedTo;
+                return event;
             }
             else if (parts[i].equals("/from") && foundIndex == -1) {
                 if (!desc.isEmpty()) {
