@@ -42,32 +42,29 @@ class Deadline extends Task {
         int i = 1;
         while (i < parts.length) {
             if (parts[i].equals("/by")) {
-                if (!desc.isEmpty()) {
-                    desc.deleteCharAt(desc.length() - 1);
-                } else {
+                if (desc.isEmpty()) {
                     throw new SYQException("Sorry! Description cannot be empty!");
                 }
+                desc.deleteCharAt(desc.length() - 1);
                 if (i == parts.length - 1) {
                     throw new SYQException("Sorry! Deadline cannot be empty!");
-                } else {
-                    Deadline deadline = new Deadline(desc.toString());
-                    StringBuilder dueDate = new StringBuilder();
-                    for (int j = i + 1; j < parts.length; j++) {
-                        dueDate.append(parts[j]);
-                        if (j < parts.length - 1) dueDate.append(" ");
-                    }
-                    String formattedDueDate;
-                    try {
-                        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
-                        formattedDueDate = LocalDate.parse(dueDate.toString(), inputFormatter)
-                                .format(outputFormatter);
-                    } catch (DateTimeParseException e) {
-                        formattedDueDate = dueDate.toString();
-                    }
-                    deadline.dueDate = formattedDueDate;
-                    return deadline;
                 }
+                Deadline deadline = new Deadline(desc.toString());
+                StringBuilder dueDate = new StringBuilder();
+                for (int j = i + 1; j < parts.length; j++) {
+                    dueDate.append(parts[j]);
+                    if (j < parts.length - 1) dueDate.append(" ");
+                }
+                String formattedDueDate;
+                try {
+                    DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+                    formattedDueDate = LocalDate.parse(dueDate.toString(), inputFormatter).format(outputFormatter);
+                } catch (DateTimeParseException e) {
+                    formattedDueDate = dueDate.toString();
+                }
+                deadline.dueDate = formattedDueDate;
+                return deadline;
             } else {
                 desc.append(parts[i]);
             }

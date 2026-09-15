@@ -92,6 +92,7 @@ public class SanYueQi {
         int index = 0;
         String typeToken = line.substring(0,2);
         String doneToken = line.substring(2,4);
+
         switch (typeToken) {
             case "T,":
                 type = 'T';
@@ -105,6 +106,7 @@ public class SanYueQi {
             default:
                 return false;
         }
+
         switch (doneToken) {
             case "0,":
                 done = false;
@@ -115,29 +117,23 @@ public class SanYueQi {
             default:
                 return false;
         }
+
         for (int i = 4; i < line.length(); i++) {
             char c = line.charAt(i);
             if (c == '"') {
                 if (!quote) {
                     quote = true;
                 } else {
-                    if (i == line.length() - 1) {
-                        break;
+                    if (i == line.length() - 1) break;
+                    i++;
+                    if (line.charAt(i) == ',') {
+                        quote = false;
+                        index = index == 0 ? (type == 'D' ? 1 : 2) : 3;
+                    } else if (line.charAt(i) == '"') {
+                        assert (index >= 0 && index <= 3);
+                        args[index].append('"');
                     } else {
-                        i++;
-                        if (line.charAt(i) == ',') {
-                            quote = false;
-                            if (index == 0) {
-                                index = type == 'D' ? 1 : 2;
-                            } else {
-                                index = 3;
-                            }
-                        } else if (line.charAt(i) == '"') {
-                            assert (index >= 0 && index <= 3);
-                            args[index].append('"');
-                        } else {
-                            return false;
-                        }
+                        return false;
                     }
                 }
             } else {
@@ -145,6 +141,7 @@ public class SanYueQi {
                 args[index].append(c);
             }
         }
+
         switch (type) {
             case 'T':
                 ToDo todo = new ToDo(done, args[0].toString());

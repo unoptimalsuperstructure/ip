@@ -33,13 +33,12 @@ class ToDo extends Task {
     public static ToDo makeToDo(String[] parts) throws SYQException {
         if (parts.length == 1) {
             throw new SYQException("Sorry! Description cannot be empty!");
-        } else {
-            StringBuilder desc = new StringBuilder();
-            for (int i = 1; i < parts.length; i++) {
-                desc.append(parts[i]);
-                if (i < parts.length - 1) desc.append(" ");
-            }
-            return new ToDo(desc.toString());
         }
+        StringBuilder desc = new StringBuilder();
+        for (int i = 1; i < parts.length; i++) {
+            desc.append(parts[i]);
+            if (i < parts.length - 1) desc.append(" ");
+        }
+        return new ToDo(desc.toString());
     }
 }
