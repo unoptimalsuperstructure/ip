@@ -30,9 +30,9 @@ class ToDo extends Task {
      * @param parts The parts of the to-do.
      * @return A to-do instance.
      */
-    public static ToDo makeToDo(String[] parts) {
+    public static ToDo makeToDo(String[] parts) throws SYQException {
         if (parts.length == 1) {
-            System.out.println("Sorry! Description cannot be empty!");
+            throw new SYQException("Sorry! Description cannot be empty!");
         } else {
             StringBuilder desc = new StringBuilder();
             for (int i = 1; i < parts.length; i++) {
@@ -41,6 +41,5 @@ class ToDo extends Task {
             }
             return new ToDo(desc.toString());
         }
-        return null;
     }
 }

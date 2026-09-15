@@ -30,6 +30,10 @@ public class Main extends Application {
             fxmlLoader.<MainWindow>getController().setSyq(syq);
 
             stage.show();
+
+            fxmlLoader.<MainWindow>getController().makeInitResponseStatusDialog();
+
+            fxmlLoader.<MainWindow>getController().makeFinalResponseStatusDialog();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -4,9 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TodoTest {
     @Test
@@ -21,6 +19,9 @@ public class TodoTest {
 
             assertNotNull(s);
             assertTrue(s.contains("[T][ ] 3 4"));
+
+        } catch (SYQException e) {
+            fail();
 
         } finally {
             System.setOut(originalOut);
@@ -39,6 +40,9 @@ public class TodoTest {
 
             assertNull(s);
 
+        } catch (SYQException e) {
+            assertTrue(true);
+
         } finally {
             System.setOut(originalOut);
         }
@@ -56,6 +60,9 @@ public class TodoTest {
 
             assertNotNull(s);
             assertTrue(s.contains("[T][ ] deadline event !#$ / /from/from /by /from \\1\" /to /to 2\\\""));
+
+        } catch (SYQException e) {
+            fail();
 
         } finally {
             System.setOut(originalOut);

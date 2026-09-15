@@ -39,18 +39,18 @@ class Event extends Task {
      * @param parts The parts of the event.
      * @return An event instance.
      */
-    public static Event makeEvent(String[] parts) {
+    public static Event makeEvent(String[] parts) throws SYQException {
         StringBuilder desc = new StringBuilder();
         int i = 1;
         int foundIndex = -1;
         while (i < parts.length) {
             if (parts[i].equals("/to")) {
                 if (foundIndex == -1) {
-                    System.out.println("Sorry! End time must be indicated after start time!");
+                    throw new SYQException("Sorry! End time must be indicated after start time!");
                 } else if (i == foundIndex + 1) {
-                    System.out.println("Sorry! Starting time cannot be empty!");
+                    throw new SYQException("Sorry! Starting time cannot be empty!");
                 } else if (i == parts.length - 1) {
-                    System.out.println("Sorry! Ending time cannot be empty!");
+                    throw new SYQException("Sorry! Ending time cannot be empty!");
                 } else {
                     Event event = new Event(desc.toString());
                     StringBuilder from = new StringBuilder();
@@ -83,15 +83,13 @@ class Event extends Task {
                     event.endTime = formattedTo;
                     return event;
                 }
-                break;
             }
             else if (parts[i].equals("/from") && foundIndex == -1) {
-                desc.deleteCharAt(desc.length() - 1);
-                if (i == 1) {
-                    System.out.println("Sorry! Description cannot be empty!");
-                    break;
-                } else {
+                if (!desc.isEmpty()) {
+                    desc.deleteCharAt(desc.length() - 1);
                     foundIndex = i;
+                } else {
+                    throw new SYQException("Sorry! Description cannot be empty!");
                 }
             } else if (foundIndex == -1) {
                 desc.append(parts[i]);
@@ -100,8 +98,9 @@ class Event extends Task {
             i += 1;
         }
         if (i == parts.length) {
-            System.out.println("Sorry! You didn't indicate either the start or end time!");
+            throw new SYQException("Sorry! You didn't indicate either the start or end time!");
         }
+        assert false;
         return null;
     }
 }
