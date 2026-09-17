@@ -83,7 +83,7 @@ public class SanYueQi {
     private static boolean parseLine(String line) {
         if (line.length() <= 4) return false;
         boolean quote = false;
-        StringBuilder[] args = new StringBuilder[4]; // description, dueDate, from, to
+        StringBuilder[] args = new StringBuilder[4]; // description, dueDate or duration, from, to
         for (int j = 0; j < 4; j++) {
             args[j] = new StringBuilder();
         }
@@ -102,6 +102,9 @@ public class SanYueQi {
                 break;
             case "E,":
                 type = 'E';
+                break;
+            case "F,":
+                type = 'F';
                 break;
             default:
                 return false;
@@ -155,6 +158,10 @@ public class SanYueQi {
                 Event event = new Event(done, args[0].toString(), args[2].toString(), args[3].toString());
                 masterTaskList.addTask(event);
                 break;
+            case 'F':
+                FixedDuration fixedDuration = new FixedDuration(done, args[0].toString(), args[1].toString());
+                masterTaskList.addTask(fixedDuration);
+                break;
             default:
                 return false;
         }
@@ -162,7 +169,7 @@ public class SanYueQi {
     }
 
     public String getResponse(String command) {
-        String[] parts = command.split("\\s+");
+        String[] parts = command.strip().split("\\s+");
 
         try {
             return switch (parts[0]) {
@@ -173,6 +180,7 @@ public class SanYueQi {
                 case "todo" -> masterTaskList.addAndWriteTask(ToDo.makeToDo(parts));
                 case "deadline" -> masterTaskList.addAndWriteTask(Deadline.makeDeadline(parts));
                 case "event" -> masterTaskList.addAndWriteTask(Event.makeEvent(parts));
+                case "fixed" -> masterTaskList.addAndWriteTask(FixedDuration.makeDuration(parts));
                 case "find" -> masterTaskList.findTasks(parts);
                 case "delete" -> masterTaskList.deleteTask(parts);
                 default -> "Sorry, I don't understand your request!";
