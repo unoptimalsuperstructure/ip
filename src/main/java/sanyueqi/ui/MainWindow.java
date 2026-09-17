@@ -31,7 +31,7 @@ public class MainWindow extends AnchorPane {
     private Image userImage =
             new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
 
-    private Image dukeImage =
+    private Image syqImage =
             new Image(this.getClass().getResourceAsStream("/images/DaDuke.png"));
 
     @FXML
@@ -47,13 +47,13 @@ public class MainWindow extends AnchorPane {
     public void makeInitResponseStatusDialog() {
         String initResponseStatus = syq.getInitResponseStatus();
         dialogContainer.getChildren().add(
-                DialogBox.getDukeDialog(initResponseStatus, dukeImage));
+                DialogBox.getSyqDialog(initResponseStatus, syqImage));
     }
 
     public void makeFinalResponseStatusDialog() {
         String finalResponseStatus = syq.getFinalResponseStatus();
         dialogContainer.getChildren().add(
-                DialogBox.getDukeDialog(finalResponseStatus, dukeImage));
+                DialogBox.getSyqDialog(finalResponseStatus, syqImage));
     }
 
     /**
@@ -68,7 +68,7 @@ public class MainWindow extends AnchorPane {
 
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getDukeDialog(response, dukeImage)
+                DialogBox.getSyqDialog(response, syqImage)
         );
 
         if (response.equals("Bye. Hope to see you again soon!")) {
