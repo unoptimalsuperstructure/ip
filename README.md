@@ -42,7 +42,7 @@ Simply replace the default `user.png` with any image of your choice. Ensure it i
 
 ## Main commands
 
-1. Add a task using `todo`, `deadline`, or `event`.
+1. Add a task using `todo`, `deadline`, `event` or `fixed`.
 2. View tasks using `list`.
 3. Mark a task using `mark` or `unmark`.
 4. Delete tasks using `delete`.
@@ -141,6 +141,17 @@ Expected output:
 Okay! I've added a new task:
     [F][ ] fixed Fixed $!1V3r W0|_f 《银狼》 h@X'|) HSRを遊んでいます \_/R 5paCE s+/\TioN /to \\ /to /by /from #from /duration/duration (duration: -422h 51min)
 You currently have 3 tasks in the list.
+```
+---
+**9. Find tasks**
+```
+find Penacony
+```
+
+Expected output:
+```
+Here are the matching tasks in your list:
+1. [D][ ] Visit Penacony (by: 31-Dec-2026)
 ```
 
 ## Credit
