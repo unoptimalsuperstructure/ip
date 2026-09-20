@@ -133,13 +133,13 @@ Okay, I've marked this task as not done yet:
 ---
 **8. Add a new Fixed-Duration Task**
 ```
-fixed $!1V3r W0|_f h@X'|) \_/R 5paCE s+/\TioN /to \\ /to /by /from #from /duration/duration /duration -420:-69
+fixed fixed Fixed $!1V3r W0|_f 《银狼》 h@X'|)　　　HSRを遊んでいます　　　\_/R 5paCE s+/\TioN /to \\ /to /by /from #from /duration/duration /duration -420:-69
 ```
 
 Expected output:
 ```
 Okay! I've added a new task:
-    [F][ ] $!1V3r W0|_f h@X'|) \_/R 5paCE s+/\TioN /to \\ /to /by /from #from /duration/duration (duration: -422h 51min)
+    [F][ ] fixed Fixed $!1V3r W0|_f 《银狼》 h@X'|)　　　HSRを遊んでいます　　　\_/R 5paCE s+/\TioN /to \\ /to /by /from #from /duration/duration (duration: -422h 51min)
 You currently have 3 tasks in the list.
 ```
 
