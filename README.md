@@ -1,6 +1,10 @@
 # SanYueQi
 
+![SanYueQi interface](docs/Ui.png)
+
 > “Are you here to play with me?”
+
+This is a simple chatbot written in Java that can be used for daily task management.
 
 For the eagle-eyed among you, yes, this project is themed around [*March 7th*](https://hsr.hoyoverse.com/en-us/character?utm_source=hsrofficialweb&utm_medium=fab&utm_campaign=button&worldIndex=3&charIndex=3), one of the main heroines of *Honkai: Star Rail*. She's here to play because ~~your mental health after CS3230~~ the *Astral Express* broke down.
 
@@ -36,3 +40,9 @@ Run it with `./gradlew run`.
 
 ## How to run
 TODO
+
+## Credit
+
+[@LazeyLazed](https://x.com/LazeyLazed) for the illustration of March 7th used in the chatbot
+
+[Ahmad Ihsan](https://www.dafont.com/profile.php?user=1228713) for the Felleria font used in the chatbot
