@@ -83,13 +83,14 @@ class TaskList {
                                      done ? "" : "un", num, taskList.size());
             }
             Task task = this.taskList.get(num - 1);
-            String taskMessage = String.format("\n\t%s\n", task);
             if (task.isDone() != done) {
                 task.markDone(done);
                 writeTasks();
+                String taskMessage = String.format("\n\t%s\n", task);
                 return String.format(done ? "Great job on completing this task!%s"
                                           : "Okay, I've marked this task as not done yet:%s", taskMessage);
             } else {
+                String taskMessage = String.format("\n\t%s\n", task);
                 return String.format(done ? "You've already marked the following task as done!%s"
                                           : "This task is already currently marked as not done yet!%s", taskMessage);
             }

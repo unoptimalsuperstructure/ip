@@ -173,17 +173,17 @@ public class SanYueQi {
 
         try {
             return switch (parts[0]) {
-                case "bye" -> "Bye. Hope to see you again soon!";
-                case "list" -> masterTaskList.printTasks();
-                case "mark" -> masterTaskList.markTask(parts, true);
-                case "unmark" -> masterTaskList.markTask(parts, false);
-                case "todo" -> masterTaskList.addAndWriteTask(ToDo.makeToDo(parts));
-                case "deadline" -> masterTaskList.addAndWriteTask(Deadline.makeDeadline(parts));
-                case "event" -> masterTaskList.addAndWriteTask(Event.makeEvent(parts));
-                case "fixed" -> masterTaskList.addAndWriteTask(FixedDuration.makeDuration(parts));
-                case "find" -> masterTaskList.findTasks(parts);
-                case "delete" -> masterTaskList.deleteTask(parts);
-                default -> "Sorry, I don't understand your request!";
+                case "bye" -> "Bye. Hope to see you again soon! ";
+                case "list" -> masterTaskList.printTasks() + " ";
+                case "mark" -> masterTaskList.markTask(parts, true) + " ";
+                case "unmark" -> masterTaskList.markTask(parts, false) + " ";
+                case "todo" -> masterTaskList.addAndWriteTask(ToDo.makeToDo(parts)) + " ";
+                case "deadline" -> masterTaskList.addAndWriteTask(Deadline.makeDeadline(parts)) + " ";
+                case "event" -> masterTaskList.addAndWriteTask(Event.makeEvent(parts)) + " ";
+                case "fixed" -> masterTaskList.addAndWriteTask(FixedDuration.makeDuration(parts)) + " ";
+                case "find" -> masterTaskList.findTasks(parts) + " ";
+                case "delete" -> masterTaskList.deleteTask(parts) + " ";
+                default -> "Sorry, I don't understand your request! ";
             };
         } catch (SYQException e) {
             return e.toString();

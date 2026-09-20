@@ -29,7 +29,7 @@ public class TodoTest {
     }
 
     @Test
-    void errorTestPrintMessage() {
+    void noDescriptionErrorTestPrintMessage() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
 

@@ -1,6 +1,7 @@
 plugins {
     java
     application
+    id("com.gradleup.shadow") version "9.5.1"
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
@@ -19,11 +20,11 @@ dependencies {
 
 javafx {
     version = "17.0.7"
-    modules("javafx.controls", "javafx.fxml")
+    modules("javafx.controls", "javafx.fxml", "javafx.graphics")
 }
 
 application {
-    mainClass.set("sanyueqi.ui.Main")
+    mainClass.set("sanyueqi.ui.Launcher")
 }
 
 tasks.named<JavaExec>("run") {
@@ -32,4 +33,8 @@ tasks.named<JavaExec>("run") {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.shadowJar {
+    archiveFileName.set("SanYueQi.jar")
 }
