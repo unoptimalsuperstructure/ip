@@ -128,7 +128,7 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getSyqDialog(response, syqImage)
         );
 
-        if (response.equals("Bye. Hope to see you again soon!")) {
+        if (response.equals("Bye. Hope to see you again soon! ")) {
             PauseTransition pause = new PauseTransition(Duration.seconds(1));
             pause.setOnFinished(event -> System.exit(0));
             pause.play();

@@ -131,7 +131,7 @@ public class SanYueQi {
                     i++;
                     if (line.charAt(i) == ',') {
                         quote = false;
-                        index = index == 0 ? (type == 'D' ? 1 : 2) : 3;
+                        index = index == 0 ? (type == 'D' || type == 'F' ? 1 : 2) : 3;
                     } else if (line.charAt(i) == '"') {
                         assert (index >= 0 && index <= 3);
                         args[index].append('"');

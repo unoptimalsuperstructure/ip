@@ -20,7 +20,13 @@ dependencies {
 
 javafx {
     version = "17.0.7"
-    modules("javafx.controls", "javafx.fxml", "javafx.graphics")
+    modules("javafx.controls", "javafx.fxml")
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
 application {
