@@ -139,7 +139,7 @@ fixed fixed Fixed $!1V3r W0|_f 《银狼》 h@X'|)　　　HSRを遊んでいま
 Expected output:
 ```
 Okay! I've added a new task:
-    [F][ ] fixed Fixed $!1V3r W0|_f 《银狼》 h@X'|)　　　HSRを遊んでいます　　　\_/R 5paCE s+/\TioN /to \\ /to /by /from #from /duration/duration (duration: -422h 51min)
+    [F][ ] fixed Fixed $!1V3r W0|_f 《银狼》 h@X'|) HSRを遊んでいます \_/R 5paCE s+/\TioN /to \\ /to /by /from #from /duration/duration (duration: -422h 51min)
 You currently have 3 tasks in the list.
 ```
 
