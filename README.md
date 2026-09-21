@@ -1,6 +1,6 @@
 # SanYueQi
 
-![SanYueQi interface](docs/Ui.png)
+![SanYueQi interface](Ui.png)
 
 > “Are you here to play with me?”
 
